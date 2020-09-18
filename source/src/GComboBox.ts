@@ -420,6 +420,7 @@ module fgui {
 
             this._selectedIndex = -1;
             this.selectedIndex = index;
+            this.updateSelectionController();
             this.dispatchEvent(new StateChangeEvent(StateChangeEvent.CHANGED));
         }
 
