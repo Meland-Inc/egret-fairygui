@@ -101,6 +101,8 @@ module fgui {
             if (!descData) {
                 descData = RES.getRes(resKey);
                 if (!descData)
+                    descData = RES.getRes(resKey + "_fui");
+                if (!descData)
                     throw "Resource '" + resKey + "' not found, please check default.res.json!";
             }
 
@@ -515,10 +517,26 @@ module fgui {
                     return item.asset;
 
                 case PackageItemType.Atlas:
+                    if (!item.decoded) {
+                        item.decoded = true;
+                        item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_png");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_jpg");
+                        if (!item.asset)
+                            console.log("Resource '" + item.file + "' not found, please check default.res.json!");
+                    }
+                    return item.asset;
+
                 case PackageItemType.Sound:
                     if (!item.decoded) {
                         item.decoded = true;
                         item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_mp3");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_wav");
                         if (!item.asset)
                             console.log("Resource '" + item.file + "' not found, please check default.res.json!");
                     }
