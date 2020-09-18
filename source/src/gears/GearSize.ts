@@ -93,6 +93,7 @@ namespace fgui {
                 this._tweenConfig._displayLockToken = 0;
             }
             this._tweenConfig._tweener = null;
+            this._owner.dispatchEventWith(GObject.GEAR_STOP, false);
         }
 
         public updateState(): void {
