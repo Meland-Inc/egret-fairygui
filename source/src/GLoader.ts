@@ -297,7 +297,11 @@ module fgui {
         }
 
         protected loadExternal(): void {
-            RES.getResByUrl(this._url, this.__getResCompleted, this);
+            if (RES.hasRes(this._url)) {
+                RES.getResAsync(this._url, this.__getResCompleted, this);
+            } else {
+                RES.getResByUrl(this._url, this.__getResCompleted, this);
+            }
         }
 
         protected freeExternal(texture: egret.Texture): void {
