@@ -173,5 +173,10 @@ module fgui {
                 this._textField.textFlow = (new egret.HtmlTextParser).parser(UBBParser.inst.parse(ToolSet.encodeHTML(this._promptText)));
             }
         }
+
+        //修复拖动输入框会锁死代码块编辑界面    Felix June 4th, 2019 3:24pm
+        public requestFocus(): void {
+            this._textField.setFocus();
+        }
     }
 }
