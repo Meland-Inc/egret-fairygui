@@ -60,6 +60,10 @@ module fgui {
             super.dispose();
         }
 
+        public get curLineItemCount(): number {
+            return this._curLineItemCount;
+        }
+
         public get layout(): ListLayoutType {
             return this._layout;
         }
