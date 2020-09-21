@@ -771,6 +771,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             _this._sortingOrder = 0;
             _this._internalVisible = true;
             _this._disposed = false;
+            _this._groupOffsetX = 0;
+            _this._groupOffsetY = 0;
             _this.sourceWidth = 0;
             _this.sourceHeight = 0;
             _this.initWidth = 0;
@@ -828,6 +830,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(GObject.prototype, "groupOffsetX", {
+            get: function () {
+                return this._groupOffsetX;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GObject.prototype, "groupOffsetY", {
+            get: function () {
+                return this._groupOffsetY;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        GObject.prototype.groupSetXYOffset = function (dx, dy) {
+            this._groupOffsetX += dx;
+            this._groupOffsetY += dy;
+            this.setXY(this.x + dx, this.y + dy);
+            if (!this._underConstruct && !this._gearLocked) {
+                var gear = this._gears[1];
+                if (gear != null && gear.controller != null) {
+                    gear.updateFromRelations(dx, dy);
+                }
+            }
+        };
         GObject.prototype.setXY = function (xv, yv) {
             if (this._x != xv || this._y != yv) {
                 var dx = xv - this._x;
@@ -3959,6 +3986,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.dropdown.parent.hidePopup();
             this._selectedIndex = -1;
             this.selectedIndex = index;
+            this.updateSelectionController();
             this.dispatchEvent(new fgui.StateChangeEvent(fgui.StateChangeEvent.CHANGED));
         };
         GComboBox.prototype.__mousedown = function (evt) {
@@ -4476,7 +4504,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             for (i = 0; i < cnt; i++) {
                 child = this._parent.getChildAt(i);
                 if (child.group == this) {
-                    child.setXY(child.x + dx, child.y + dy);
+                    child.groupSetXYOffset(dx, dy);
                 }
             }
             this._updating &= 2;
@@ -5028,6 +5056,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._pool.clear();
             _super_1.prototype.dispose.call(this);
         };
+        Object.defineProperty(GList.prototype, "curLineItemCount", {
+            get: function () {
+                return this._curLineItemCount;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(GList.prototype, "layout", {
             get: function () {
                 return this._layout;
@@ -7429,7 +7464,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.setErrorState();
         };
         GLoader.prototype.loadExternal = function () {
-            RES.getResByUrl(this._url, this.__getResCompleted, this);
+            if (RES.hasRes(this._url)) {
+                RES.getResAsync(this._url, this.__getResCompleted, this);
+            }
+            else {
+                RES.getResByUrl(this._url, this.__getResCompleted, this);
+            }
         };
         GLoader.prototype.freeExternal = function (texture) {
         };
@@ -8689,6 +8729,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.render();
         };
         GTextField.prototype.render = function () {
+            if (this.isDisposed)
+                return;
             if (!this._requireRender) {
                 this._requireRender = true;
                 egret.callLater(this.__render, this);
@@ -8715,10 +8757,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.updateTextFieldText();
             this._textWidth = Math.ceil(this._textField.textWidth);
             if (this._textWidth > 0)
-                this._textWidth += 4;
+                this._textWidth += 5;
             this._textHeight = Math.ceil(this._textField.textHeight);
             if (this._textHeight > 0)
-                this._textHeight += 4;
+                this._textHeight += 7;
             var w, h = 0;
             if (this._widthAutoSize) {
                 w = this._textWidth;
@@ -10158,6 +10200,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._textField.displayAsPassword = false;
                 this._textField.textFlow = (new egret.HtmlTextParser).parser(fgui.UBBParser.inst.parse(fgui.ToolSet.encodeHTML(this._promptText)));
             }
+        };
+        GTextInput.prototype.requestFocus = function () {
+            this._textField.setFocus();
         };
         return GTextInput;
     }(fgui.GTextField));
@@ -14692,6 +14737,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (!descData) {
                 descData = RES.getRes(resKey);
                 if (!descData)
+                    descData = RES.getRes(resKey + "_fui");
+                if (!descData)
                     throw "Resource '" + resKey + "' not found, please check default.res.json!";
             }
             var pkg = new UIPackage();
@@ -15045,10 +15092,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                     return item.asset;
                 case fgui.PackageItemType.Atlas:
+                    if (!item.decoded) {
+                        item.decoded = true;
+                        item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_png");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_jpg");
+                        if (!item.asset)
+                            console.log("Resource '" + item.file + "' not found, please check default.res.json!");
+                    }
+                    return item.asset;
                 case fgui.PackageItemType.Sound:
                     if (!item.decoded) {
                         item.decoded = true;
                         item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_mp3");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_wav");
                         if (!item.asset)
                             console.log("Resource '" + item.file + "' not found, please check default.res.json!");
                     }
@@ -16904,6 +16966,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._tweenConfig._displayLockToken = 0;
             }
             this._tweenConfig._tweener = null;
+            this._owner.dispatchEventWith(fgui.GObject.GEAR_STOP, false);
         };
         GearLook.prototype.updateState = function () {
             var gv = this._storage[this._controller.selectedPageId];
@@ -16995,6 +17058,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._tweenConfig._displayLockToken = 0;
             }
             this._tweenConfig._tweener = null;
+            this._owner.dispatchEventWith(fgui.GObject.GEAR_STOP, false);
         };
         GearSize.prototype.updateState = function () {
             var gv = this._storage[this._controller.selectedPageId];
@@ -17141,6 +17205,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._tweenConfig._displayLockToken = 0;
             }
             this._tweenConfig._tweener = null;
+            this._owner.dispatchEventWith(fgui.GObject.GEAR_STOP, false);
         };
         GearXY.prototype.updateState = function () {
             var gv = this._storage[this._controller.selectedPageId];

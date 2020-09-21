@@ -285,6 +285,8 @@ declare module fgui {
         private _gears;
         private _displayObject;
         private _dragBounds?;
+        private _groupOffsetX;
+        private _groupOffsetY;
         sourceWidth: number;
         sourceHeight: number;
         initWidth: number;
@@ -313,6 +315,9 @@ declare module fgui {
         name: string;
         x: number;
         y: number;
+        readonly groupOffsetX: number;
+        readonly groupOffsetY: number;
+        groupSetXYOffset(dx: number, dy: number): void;
         setXY(xv: number, yv: number): void;
         xMin: number;
         yMin: number;
@@ -776,6 +781,7 @@ declare module fgui {
         private itemInfoVer;
         constructor();
         dispose(): void;
+        readonly curLineItemCount: number;
         layout: ListLayoutType;
         lineCount: number;
         columnCount: number;
@@ -1241,6 +1247,7 @@ declare module fgui {
         private __textChanged;
         private __focusIn;
         private __focusOut;
+        requestFocus(): void;
     }
 }
 declare namespace fgui {
@@ -1989,6 +1996,7 @@ declare module fgui {
         itemObject: GObject;
         stageX: number;
         stageY: number;
+        button: number;
         static CLICK: string;
         constructor(type: string, itemObject?: GObject, stageX?: number, stageY?: number);
     }
