@@ -247,7 +247,7 @@ namespace fgui {
             for (i = 0; i < cnt; i++) {
                 child = this._parent.getChildAt(i);
                 if (child.group == this) {
-                    child.setXY(child.x + dx, child.y + dy);
+                    child.groupSetXYOffset(dx, dy);
                 }
             }
 
