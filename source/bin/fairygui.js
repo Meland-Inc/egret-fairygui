@@ -5623,6 +5623,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (this._scrollPane && this.scrollItemToViewOnClick)
                 this._scrollPane.scrollToView(item, true);
             var ie = new fgui.ItemEvent(fgui.ItemEvent.CLICK, item);
+            ie.button = evt.button;
             ie.stageX = evt.stageX;
             ie.stageY = evt.stageY;
             this.dispatchItemEvent(ie);
