@@ -26,6 +26,11 @@ module fgui {
         }
 
         public get graphics(): egret.Graphics {
+            if (this._graphics)
+                return this._graphics;
+
+            this.delayCreateDisplayObject();
+            this._graphics = (<egret.Sprite>(this.displayObject)).graphics;
             return this._graphics;
         }
 
@@ -202,17 +207,30 @@ module fgui {
         }
 
         public setNativeObject(obj: egret.DisplayObject): void {
-            var sprite: egret.Sprite = new egret.Sprite();
-            this.setDisplayObject(sprite);
-            if (this._parent)
-                this._parent.childStateChanged(this);
-            this.handleXYChanged();
-            sprite.alpha = this.alpha;
-            sprite.rotation = this.rotation;
-            sprite.visible = this.visible;
-            sprite.touchEnabled = this.touchable;
-            sprite.touchChildren = this.touchable;
-            sprite.addChild(obj);
+            this.delayCreateDisplayObject();
+            (<egret.Sprite>(this.displayObject)).addChild(obj);
+        }
+
+        private delayCreateDisplayObject(): void {
+            if (!this.displayObject) {
+                var sprite: UISprite = new UISprite();
+                sprite["$owner"] = this;
+                this.setDisplayObject(sprite);
+                if (this._parent)
+                    this._parent.childStateChanged(this);
+                this.handleXYChanged();
+                sprite.alpha = this.alpha;
+                sprite.rotation = this.rotation;
+                sprite.visible = this.visible;
+                sprite.touchEnabled = this.touchable;
+                sprite.touchChildren = this.touchable;
+                sprite.hitArea = new egret.Rectangle(0, 0, this.width, this.height);
+            }
+            else {
+                (<egret.Sprite>(this.displayObject)).graphics.clear();
+                (<egret.Sprite>(this.displayObject)).removeChildren();
+                this._graphics = null;
+            }
         }
 
         protected createDisplayObject(): void {
@@ -237,22 +255,27 @@ module fgui {
         }
 
         protected handleSizeChanged(): void {
-            super.handleSizeChanged();
+            if (this._graphics) {
+                if (this._type != 0)
+                    this.updateGraph();
+            }
 
-            if (this._type != 0)
-                this.updateGraph();
+            if (this.displayObject instanceof UISprite) {
+                if ((<UISprite>(this.displayObject)).hitArea == null)
+                    (<UISprite>(this.displayObject)).hitArea = new egret.Rectangle(0, 0, this.width, this.height);
+                else {
+                    (<UISprite>(this.displayObject)).hitArea.width = this.width;
+                    (<UISprite>(this.displayObject)).hitArea.height = this.height;
+                }
+            }
         }
 
         public setup_beforeAdd(buffer: ByteBuffer, beginPos: number): void {
-            super.setup_beforeAdd(buffer, beginPos);
-
             buffer.seek(beginPos, 5);
 
-            this._type = buffer.readByte();
-            if (this._type != 0) {
-                var i: number;
+            var type: number = buffer.readByte();
+            if (type != 0) {
                 var cnt: number;
-
                 this._lineSize = buffer.readInt();
                 var c: number = buffer.readColor(true);
                 this._lineColor = c & 0xFFFFFF;
@@ -262,7 +285,7 @@ module fgui {
                 this._fillAlpha = ((c >> 24) & 0xFF) / 0xFF;
                 if (buffer.readBool()) {
                     this._cornerRadius = new Array<number>(4);
-                    for (i = 0; i < 4; i++)
+                    for (var i: number = 0; i < 4; i++)
                         this._cornerRadius[i] = buffer.readFloat();
                 }
 
@@ -284,6 +307,16 @@ module fgui {
                     }
                 }
 
+                var sprite: UISprite = new UISprite();
+                sprite["$owner"] = this;
+                this.setDisplayObject(sprite);
+            }
+
+            super.setup_beforeAdd(buffer, beginPos);
+
+            if (this.displayObject != null) {
+                this._graphics = (<egret.Sprite>(this.displayObject)).graphics;
+                this._type = type;
                 this.updateGraph();
             }
         }
