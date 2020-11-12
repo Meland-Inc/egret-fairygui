@@ -1193,33 +1193,23 @@ module fgui {
         }
 
         private dragBegin(touchPointID?: number, stageX?: number, stageY?: number): void {
-            if (GObject.draggingObject) {
-                let tmp: GObject = GObject.draggingObject;
-                tmp.stopDrag();
-                GObject.draggingObject = null;
-
-                var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_END);
-                dragEvent.stageX = stageX || GRoot.mouseX;
-                dragEvent.stageY = stageY || GRoot.mouseY;
-                dragEvent.touchPointID = touchPointID || 0;
-                tmp.dispatchEvent(dragEvent);
-            }
+            if (GObject.draggingObject != null)
+                GObject.draggingObject.stopDrag();
 
             sGlobalDragStart.x = stageX || GRoot.mouseX;
             sGlobalDragStart.y = stageY || GRoot.mouseY;
 
             this.localToGlobalRect(0, 0, this._width, this._height, sGlobalRect);
-            this._dragTesting = true;
             GObject.draggingObject = this;
 
-            GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving, this);
-            GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end, this);
+            GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving2, this);
+            GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end2, this);
         }
 
         private dragEnd(): void {
             if (GObject.draggingObject == this) {
-                this.reset();
-                this._dragTesting = false;
+                GRoot.inst.nativeStage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving2, this);
+                GRoot.inst.nativeStage.removeEventListener(egret.TouchEvent.TOUCH_END, this.__end2, this);
                 GObject.draggingObject = null;
             }
         }
@@ -1234,83 +1224,79 @@ module fgui {
                 this._dragStartPos = new egret.Point();
             this._dragStartPos.x = evt.stageX;
             this._dragStartPos.y = evt.stageY;
-            this._dragTesting = true;
 
             GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving, this);
             GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end, this);
         }
 
-        private __moving(evt: egret.TouchEvent): void {
-            if (GObject.draggingObject != this && this._draggable && this._dragTesting) {
-                var sensitivity: number = UIConfig.touchDragSensitivity;
-                if (this._dragStartPos
-                    && Math.abs(this._dragStartPos.x - evt.stageX) < sensitivity
-                    && Math.abs(this._dragStartPos.y - evt.stageY) < sensitivity)
-                    return;
-
-                this._dragTesting = false;
-
-                var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_START);
-                dragEvent.stageX = evt.stageX;
-                dragEvent.stageY = evt.stageY;
-                dragEvent.touchPointID = evt.touchPointID;
-                this.dispatchEvent(dragEvent);
-
-                if (!dragEvent.isDefaultPrevented())
-                    this.dragBegin(evt.touchPointID, evt.stageX, evt.stageY);
-            }
-
-            if (GObject.draggingObject == this) {
-                var xx: number = evt.stageX - sGlobalDragStart.x + sGlobalRect.x;
-                var yy: number = evt.stageY - sGlobalDragStart.y + sGlobalRect.y;
-
-                if (this._dragBounds) {
-                    var rect: egret.Rectangle = GRoot.inst.localToGlobalRect(this._dragBounds.x, this._dragBounds.y,
-                        this._dragBounds.width, this._dragBounds.height, sDragHelperRect);
-                    if (xx < rect.x)
-                        xx = rect.x;
-                    else if (xx + sGlobalRect.width > rect.right) {
-                        xx = rect.right - sGlobalRect.width;
-                        if (xx < rect.x)
-                            xx = rect.x;
-                    }
-
-                    if (yy < rect.y)
-                        yy = rect.y;
-                    else if (yy + sGlobalRect.height > rect.bottom) {
-                        yy = rect.bottom - sGlobalRect.height;
-                        if (yy < rect.y)
-                            yy = rect.y;
-                    }
-                }
-
-                sUpdateInDragging = true;
-                var pt: egret.Point = this.parent.globalToLocal(xx, yy, sHelperPoint);
-                this.setXY(Math.round(pt.x), Math.round(pt.y));
-                sUpdateInDragging = false;
-
-                var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_MOVING);
-                dragEvent.stageX = evt.stageX;
-                dragEvent.stageY = evt.stageY;
-                dragEvent.touchPointID = evt.touchPointID;
-                this.dispatchEvent(dragEvent);
-            }
+        private __end(evt: egret.TouchEvent): void {
+            this.reset();
         }
 
-        private __end(evt: egret.TouchEvent): void {
+        private __moving(evt: egret.TouchEvent): void {
+            var sensitivity: number = UIConfig.touchDragSensitivity;
+            if (this._dragStartPos != null
+                && Math.abs(this._dragStartPos.x - evt.stageX) < sensitivity
+                && Math.abs(this._dragStartPos.y - evt.stageY) < sensitivity)
+                return;
+
+            this.reset();
+
+            var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_START);
+            dragEvent.stageX = evt.stageX;
+            dragEvent.stageY = evt.stageY;
+            dragEvent.touchPointID = evt.touchPointID;
+            this.dispatchEvent(dragEvent);
+
+            if (!dragEvent.isDefaultPrevented())
+                this.dragBegin(evt.touchPointID, evt.stageX, evt.stageY);
+        }
+
+        private __moving2(evt: egret.TouchEvent): void {
+            var xx: number = evt.stageX - sGlobalDragStart.x + sGlobalRect.x;
+            var yy: number = evt.stageY - sGlobalDragStart.y + sGlobalRect.y;
+
+            if (this._dragBounds != null) {
+                var rect: egret.Rectangle = GRoot.inst.localToGlobalRect(this._dragBounds.x, this._dragBounds.y,
+                    this._dragBounds.width, this._dragBounds.height, sDragHelperRect);
+                if (xx < rect.x)
+                    xx = rect.x;
+                else if (xx + sGlobalRect.width > rect.right) {
+                    xx = rect.right - sGlobalRect.width;
+                    if (xx < rect.x)
+                        xx = rect.x;
+                }
+
+                if (yy < rect.y)
+                    yy = rect.y;
+                else if (yy + sGlobalRect.height > rect.bottom) {
+                    yy = rect.bottom - sGlobalRect.height;
+                    if (yy < rect.y)
+                        yy = rect.y;
+                }
+            }
+
+            sUpdateInDragging = true;
+            var pt: egret.Point = this.parent.globalToLocal(xx, yy, sHelperPoint);
+            this.setXY(Math.round(pt.x), Math.round(pt.y));
+            sUpdateInDragging = false;
+
+            var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_MOVING);
+            dragEvent.stageX = evt.stageX;
+            dragEvent.stageY = evt.stageY;
+            dragEvent.touchPointID = evt.touchPointID;
+            this.dispatchEvent(dragEvent);
+        }
+
+        private __end2(evt: egret.TouchEvent): void {
             if (GObject.draggingObject == this) {
-                GObject.draggingObject = null;
-                this.reset();
+                this.stopDrag();
 
                 var dragEvent: DragEvent = new DragEvent(DragEvent.DRAG_END);
                 dragEvent.stageX = evt.stageX;
                 dragEvent.stageY = evt.stageY;
                 dragEvent.touchPointID = evt.touchPointID;
                 this.dispatchEvent(dragEvent);
-            }
-            else if (this._dragTesting) {
-                this._dragTesting = false;
-                this.reset();
             }
         }
         //-------------------------------------------------------------------
