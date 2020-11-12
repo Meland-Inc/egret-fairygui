@@ -1970,28 +1970,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.__begin, this);
         };
         GObject.prototype.dragBegin = function (touchPointID, stageX, stageY) {
-            if (GObject.draggingObject) {
-                var tmp = GObject.draggingObject;
-                tmp.stopDrag();
-                GObject.draggingObject = null;
-                var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_END);
-                dragEvent.stageX = stageX || fgui.GRoot.mouseX;
-                dragEvent.stageY = stageY || fgui.GRoot.mouseY;
-                dragEvent.touchPointID = touchPointID || 0;
-                tmp.dispatchEvent(dragEvent);
-            }
+            if (GObject.draggingObject != null)
+                GObject.draggingObject.stopDrag();
             sGlobalDragStart.x = stageX || fgui.GRoot.mouseX;
             sGlobalDragStart.y = stageY || fgui.GRoot.mouseY;
             this.localToGlobalRect(0, 0, this._width, this._height, sGlobalRect);
-            this._dragTesting = true;
             GObject.draggingObject = this;
-            fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving, this);
-            fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end, this);
+            fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving2, this);
+            fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end2, this);
         };
         GObject.prototype.dragEnd = function () {
             if (GObject.draggingObject == this) {
-                this.reset();
-                this._dragTesting = false;
+                fgui.GRoot.inst.nativeStage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving2, this);
+                fgui.GRoot.inst.nativeStage.removeEventListener(egret.TouchEvent.TOUCH_END, this.__end2, this);
                 GObject.draggingObject = null;
             }
         };
@@ -2004,70 +1995,65 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._dragStartPos = new egret.Point();
             this._dragStartPos.x = evt.stageX;
             this._dragStartPos.y = evt.stageY;
-            this._dragTesting = true;
             fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.__moving, this);
             fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__end, this);
         };
+        GObject.prototype.__end = function (evt) {
+            this.reset();
+        };
         GObject.prototype.__moving = function (evt) {
-            if (GObject.draggingObject != this && this._draggable && this._dragTesting) {
-                var sensitivity = fgui.UIConfig.touchDragSensitivity;
-                if (this._dragStartPos
-                    && Math.abs(this._dragStartPos.x - evt.stageX) < sensitivity
-                    && Math.abs(this._dragStartPos.y - evt.stageY) < sensitivity)
-                    return;
-                this._dragTesting = false;
-                var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_START);
-                dragEvent.stageX = evt.stageX;
-                dragEvent.stageY = evt.stageY;
-                dragEvent.touchPointID = evt.touchPointID;
-                this.dispatchEvent(dragEvent);
-                if (!dragEvent.isDefaultPrevented())
-                    this.dragBegin(evt.touchPointID, evt.stageX, evt.stageY);
-            }
-            if (GObject.draggingObject == this) {
-                var xx = evt.stageX - sGlobalDragStart.x + sGlobalRect.x;
-                var yy = evt.stageY - sGlobalDragStart.y + sGlobalRect.y;
-                if (this._dragBounds) {
-                    var rect = fgui.GRoot.inst.localToGlobalRect(this._dragBounds.x, this._dragBounds.y, this._dragBounds.width, this._dragBounds.height, sDragHelperRect);
+            var sensitivity = fgui.UIConfig.touchDragSensitivity;
+            if (this._dragStartPos != null
+                && Math.abs(this._dragStartPos.x - evt.stageX) < sensitivity
+                && Math.abs(this._dragStartPos.y - evt.stageY) < sensitivity)
+                return;
+            this.reset();
+            var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_START);
+            dragEvent.stageX = evt.stageX;
+            dragEvent.stageY = evt.stageY;
+            dragEvent.touchPointID = evt.touchPointID;
+            this.dispatchEvent(dragEvent);
+            if (!dragEvent.isDefaultPrevented())
+                this.dragBegin(evt.touchPointID, evt.stageX, evt.stageY);
+        };
+        GObject.prototype.__moving2 = function (evt) {
+            var xx = evt.stageX - sGlobalDragStart.x + sGlobalRect.x;
+            var yy = evt.stageY - sGlobalDragStart.y + sGlobalRect.y;
+            if (this._dragBounds != null) {
+                var rect = fgui.GRoot.inst.localToGlobalRect(this._dragBounds.x, this._dragBounds.y, this._dragBounds.width, this._dragBounds.height, sDragHelperRect);
+                if (xx < rect.x)
+                    xx = rect.x;
+                else if (xx + sGlobalRect.width > rect.right) {
+                    xx = rect.right - sGlobalRect.width;
                     if (xx < rect.x)
                         xx = rect.x;
-                    else if (xx + sGlobalRect.width > rect.right) {
-                        xx = rect.right - sGlobalRect.width;
-                        if (xx < rect.x)
-                            xx = rect.x;
-                    }
+                }
+                if (yy < rect.y)
+                    yy = rect.y;
+                else if (yy + sGlobalRect.height > rect.bottom) {
+                    yy = rect.bottom - sGlobalRect.height;
                     if (yy < rect.y)
                         yy = rect.y;
-                    else if (yy + sGlobalRect.height > rect.bottom) {
-                        yy = rect.bottom - sGlobalRect.height;
-                        if (yy < rect.y)
-                            yy = rect.y;
-                    }
                 }
-                sUpdateInDragging = true;
-                var pt = this.parent.globalToLocal(xx, yy, sHelperPoint);
-                this.setXY(Math.round(pt.x), Math.round(pt.y));
-                sUpdateInDragging = false;
-                var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_MOVING);
-                dragEvent.stageX = evt.stageX;
-                dragEvent.stageY = evt.stageY;
-                dragEvent.touchPointID = evt.touchPointID;
-                this.dispatchEvent(dragEvent);
             }
+            sUpdateInDragging = true;
+            var pt = this.parent.globalToLocal(xx, yy, sHelperPoint);
+            this.setXY(Math.round(pt.x), Math.round(pt.y));
+            sUpdateInDragging = false;
+            var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_MOVING);
+            dragEvent.stageX = evt.stageX;
+            dragEvent.stageY = evt.stageY;
+            dragEvent.touchPointID = evt.touchPointID;
+            this.dispatchEvent(dragEvent);
         };
-        GObject.prototype.__end = function (evt) {
+        GObject.prototype.__end2 = function (evt) {
             if (GObject.draggingObject == this) {
-                GObject.draggingObject = null;
-                this.reset();
+                this.stopDrag();
                 var dragEvent = new fgui.DragEvent(fgui.DragEvent.DRAG_END);
                 dragEvent.stageX = evt.stageX;
                 dragEvent.stageY = evt.stageY;
                 dragEvent.touchPointID = evt.touchPointID;
                 this.dispatchEvent(dragEvent);
-            }
-            else if (this._dragTesting) {
-                this._dragTesting = false;
-                this.reset();
             }
         };
         GObject.XY_CHANGED = "__xyChanged";
@@ -4031,6 +4017,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         }
         Object.defineProperty(GGraph.prototype, "graphics", {
             get: function () {
+                if (this._graphics)
+                    return this._graphics;
+                this.delayCreateDisplayObject();
+                this._graphics = (this.displayObject).graphics;
                 return this._graphics;
             },
             enumerable: true,
@@ -4190,17 +4180,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._parent.addChildAt(target, index);
         };
         GGraph.prototype.setNativeObject = function (obj) {
-            var sprite = new egret.Sprite();
-            this.setDisplayObject(sprite);
-            if (this._parent)
-                this._parent.childStateChanged(this);
-            this.handleXYChanged();
-            sprite.alpha = this.alpha;
-            sprite.rotation = this.rotation;
-            sprite.visible = this.visible;
-            sprite.touchEnabled = this.touchable;
-            sprite.touchChildren = this.touchable;
-            sprite.addChild(obj);
+            this.delayCreateDisplayObject();
+            (this.displayObject).addChild(obj);
+        };
+        GGraph.prototype.delayCreateDisplayObject = function () {
+            if (!this.displayObject) {
+                var sprite = new fgui.UISprite();
+                sprite["$owner"] = this;
+                this.setDisplayObject(sprite);
+                if (this._parent)
+                    this._parent.childStateChanged(this);
+                this.handleXYChanged();
+                sprite.alpha = this.alpha;
+                sprite.rotation = this.rotation;
+                sprite.visible = this.visible;
+                sprite.touchEnabled = this.touchable;
+                sprite.touchChildren = this.touchable;
+                sprite.hitArea = new egret.Rectangle(0, 0, this.width, this.height);
+            }
+            else {
+                (this.displayObject).graphics.clear();
+                (this.displayObject).removeChildren();
+                this._graphics = null;
+            }
         };
         GGraph.prototype.createDisplayObject = function () {
             var sprite = new egret.Sprite();
@@ -4221,16 +4223,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 _super_1.prototype.setProp.call(this, index, value);
         };
         GGraph.prototype.handleSizeChanged = function () {
-            _super_1.prototype.handleSizeChanged.call(this);
-            if (this._type != 0)
-                this.updateGraph();
+            if (this._graphics) {
+                if (this._type != 0)
+                    this.updateGraph();
+            }
+            if (this.displayObject instanceof fgui.UISprite) {
+                if ((this.displayObject).hitArea == null)
+                    (this.displayObject).hitArea = new egret.Rectangle(0, 0, this.width, this.height);
+                else {
+                    (this.displayObject).hitArea.width = this.width;
+                    (this.displayObject).hitArea.height = this.height;
+                }
+            }
         };
         GGraph.prototype.setup_beforeAdd = function (buffer, beginPos) {
-            _super_1.prototype.setup_beforeAdd.call(this, buffer, beginPos);
             buffer.seek(beginPos, 5);
-            this._type = buffer.readByte();
-            if (this._type != 0) {
-                var i;
+            var type = buffer.readByte();
+            if (type != 0) {
                 var cnt;
                 this._lineSize = buffer.readInt();
                 var c = buffer.readColor(true);
@@ -4241,7 +4250,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._fillAlpha = ((c >> 24) & 0xFF) / 0xFF;
                 if (buffer.readBool()) {
                     this._cornerRadius = new Array(4);
-                    for (i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                         this._cornerRadius[i] = buffer.readFloat();
                 }
                 if (this._type == 3) {
@@ -4261,6 +4270,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             this._distances[i] = buffer.readFloat();
                     }
                 }
+                var sprite = new fgui.UISprite();
+                sprite["$owner"] = this;
+                this.setDisplayObject(sprite);
+            }
+            _super_1.prototype.setup_beforeAdd.call(this, buffer, beginPos);
+            if (this.displayObject != null) {
+                this._graphics = (this.displayObject).graphics;
+                this._type = type;
                 this.updateGraph();
             }
         };
@@ -16470,6 +16487,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         return UIContainer;
     }(egret.DisplayObjectContainer));
     fgui.UIContainer = UIContainer;
+})(fgui || (fgui = {}));
+
+(function (fgui) {
+    var UISprite = (function (_super_1) {
+        __extends(UISprite, _super_1);
+        function UISprite() {
+            var _this = _super_1.call(this) || this;
+            _this.touchEnabled = true;
+            _this.touchChildren = true;
+            return _this;
+        }
+        Object.defineProperty(UISprite.prototype, "hitArea", {
+            get: function () {
+                return this._hitArea;
+            },
+            set: function (value) {
+                if (this._hitArea && value) {
+                    this._hitArea.x = value.x;
+                    this._hitArea.y = value.y;
+                    this._hitArea.width = value.width;
+                    this._hitArea.height = value.height;
+                }
+                else
+                    this._hitArea = (value ? value.clone() : null);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        UISprite.prototype.$hitTest = function (stageX, stageY) {
+            var ret = _super_1.prototype.$hitTest.call(this, stageX, stageY);
+            if (ret == this) {
+                if (!this.touchEnabled || this._hitArea == null)
+                    return null;
+            }
+            else if (ret == null && this.touchEnabled && this._hitArea != null) {
+                var m = this.$getInvertedConcatenatedMatrix();
+                var localX = m.a * stageX + m.c * stageY + m.tx;
+                var localY = m.b * stageX + m.d * stageY + m.ty;
+                if (this._hitArea.contains(localX, localY))
+                    ret = this;
+            }
+            return ret;
+        };
+        return UISprite;
+    }(egret.Sprite));
+    fgui.UISprite = UISprite;
 })(fgui || (fgui = {}));
 
 (function (fgui) {
