@@ -439,8 +439,10 @@ declare module fgui {
         private dragEnd;
         private reset;
         private __begin;
-        private __moving;
         private __end;
+        private __moving;
+        private __moving2;
+        private __end2;
     }
 }
 declare module fgui {
@@ -585,6 +587,8 @@ declare module fgui {
         setProp(index: number, value: any): void;
         protected constructExtension(buffer: ByteBuffer): void;
         setup_afterAdd(buffer: ByteBuffer, beginPos: number): void;
+        rollOver(evt: egret.TouchEvent): void;
+        rollOut(evt: egret.TouchEvent): void;
         private __mousedown;
         private __mouseup;
         private __click;
@@ -665,6 +669,7 @@ declare module fgui {
         addBeforeMe(target: GObject): void;
         addAfterMe(target: GObject): void;
         setNativeObject(obj: egret.DisplayObject): void;
+        private delayCreateDisplayObject;
         protected createDisplayObject(): void;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
@@ -1967,6 +1972,14 @@ declare module fgui {
         cacheHitArea(value: boolean): void;
         hitArea: PixelHitTest | egret.DisplayObject;
         opaque: boolean;
+        $hitTest(stageX: number, stageY: number): egret.DisplayObject;
+    }
+}
+declare module fgui {
+    class UISprite extends egret.Sprite {
+        private _hitArea;
+        constructor();
+        hitArea: egret.Rectangle;
         $hitTest(stageX: number, stageY: number): egret.DisplayObject;
     }
 }

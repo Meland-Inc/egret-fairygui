@@ -3516,6 +3516,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._soundVolumeScale = buffer.readFloat();
             this.selected = buffer.readBool();
         };
+        GButton.prototype.rollOver = function (evt) {
+            if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
+                return;
+            this._over = true;
+            if (this._down)
+                return;
+            this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
+        };
+        GButton.prototype.rollOut = function (evt) {
+            if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
+                return;
+            this._over = false;
+            if (this._down)
+                return;
+            this.setState(this._selected ? GButton.DOWN : GButton.UP);
+        };
         GButton.prototype.__mousedown = function (evt) {
             this._down = true;
             fgui.GRoot.inst.nativeStage.addEventListener(egret.TouchEvent.TOUCH_END, this.__mouseup, this);
@@ -15107,6 +15123,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             item.asset.bitmapData = atlas.bitmapData;
                             item.asset.$initData(atlas.$bitmapX + sprite.rect.x, atlas.$bitmapY + sprite.rect.y, sprite.rect.width, sprite.rect.height, sprite.offset.x, sprite.offset.y, sprite.originalSize.x, sprite.originalSize.y, atlas.$sourceWidth, atlas.$sourceHeight, sprite.rotated);
                         }
+                    }
+                    return item.asset;
+                case fgui.PackageItemType.Atlas:
+                    if (!item.decoded) {
+                        item.decoded = true;
+                        item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_png");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_jpg");
+                        if (!item.asset)
+                            console.log("Resource '" + item.file + "' not found, please check default.res.json!");
+                    }
+                    return item.asset;
+                case fgui.PackageItemType.Sound:
+                    if (!item.decoded) {
+                        item.decoded = true;
+                        item.asset = RES.getRes(item.file);
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_mp3");
+                        if (!item.asset)
+                            item.asset = RES.getRes(item.file + "_wav");
+                        if (!item.asset)
+                            console.log("Resource '" + item.file + "' not found, please check default.res.json!");
                     }
                     return item.asset;
                 case fgui.PackageItemType.Atlas:

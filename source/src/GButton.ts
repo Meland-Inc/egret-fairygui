@@ -437,27 +437,27 @@ module fgui {
             this.selected = buffer.readBool();
         }
 
-        // private __rollover(evt: egret.TouchEvent): void {
-        //     if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
-        //         return;
+        public rollOver(evt: egret.TouchEvent): void {
+            if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
+                return;
 
-        //     this._over = true;
-        //     if (this._down)
-        //         return;
+            this._over = true;
+            if (this._down)
+                return;
 
-        //     this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
-        // }
+            this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
+        }
 
-        // private __rollout(evt: egret.TouchEvent): void {
-        //     if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
-        //         return;
+        public rollOut(evt: egret.TouchEvent): void {
+            if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
+                return;
 
-        //     this._over = false;
-        //     if (this._down)
-        //         return;
+            this._over = false;
+            if (this._down)
+                return;
 
-        //     this.setState(this._selected ? GButton.DOWN : GButton.UP);
-        // }
+            this.setState(this._selected ? GButton.DOWN : GButton.UP);
+        }
 
         private __mousedown(evt: egret.TouchEvent): void {
             this._down = true;
