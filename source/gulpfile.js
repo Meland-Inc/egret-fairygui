@@ -21,14 +21,16 @@ gulp.task('buildJs', () => {
         .pipe(gulp.dest('./bin'));
 });
 
-gulp.task("buildDts", gulp.series("buildJs"), () => {
+gulp.task("buildDts", () => {
     return tsProject.src()
         .pipe(tsProject())
         .dts.pipe(inject.append('import fairygui = fgui;'))
         .pipe(gulp.dest('./bin'));
 });
 
-gulp.task("build", gulp.series("buildDts"), () => {
+gulp.task("buildCopy", () => {
     return gulp.src('bin/**/*')
         .pipe(gulp.dest('../demo/libs/fairygui/'))
 });
+
+gulp.task("build", gulp.series("buildJs", "buildDts", "buildCopy"));
