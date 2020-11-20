@@ -437,7 +437,7 @@ module fgui {
             this.selected = buffer.readBool();
         }
 
-        public rollOver(evt: egret.TouchEvent): void {
+        public rollOver(): void {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
 
@@ -448,7 +448,7 @@ module fgui {
             this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
         }
 
-        public rollOut(evt: egret.TouchEvent): void {
+        public rollOut(): void {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
 
