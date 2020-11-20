@@ -3516,7 +3516,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._soundVolumeScale = buffer.readFloat();
             this.selected = buffer.readBool();
         };
-        GButton.prototype.rollOver = function (evt) {
+        GButton.prototype.rollOver = function () {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
             this._over = true;
@@ -3524,7 +3524,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
         };
-        GButton.prototype.rollOut = function (evt) {
+        GButton.prototype.rollOut = function () {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
             this._over = false;
