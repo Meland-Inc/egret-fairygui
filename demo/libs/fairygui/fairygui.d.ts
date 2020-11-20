@@ -587,8 +587,8 @@ declare module fgui {
         setProp(index: number, value: any): void;
         protected constructExtension(buffer: ByteBuffer): void;
         setup_afterAdd(buffer: ByteBuffer, beginPos: number): void;
-        rollOver(evt: egret.TouchEvent): void;
-        rollOut(evt: egret.TouchEvent): void;
+        rollOver(): void;
+        rollOut(): void;
         private __mousedown;
         private __mouseup;
         private __click;
