@@ -442,8 +442,6 @@ module fgui {
                 return;
 
             this._over = true;
-            if (this._down)
-                return;
 
             this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
         }
@@ -453,8 +451,6 @@ module fgui {
                 return;
 
             this._over = false;
-            if (this._down)
-                return;
 
             this.setState(this._selected ? GButton.DOWN : GButton.UP);
         }

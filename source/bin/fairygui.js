@@ -3520,16 +3520,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
             this._over = true;
-            if (this._down)
-                return;
             this.setState(this._selected ? GButton.SELECTED_OVER : GButton.OVER);
         };
         GButton.prototype.rollOut = function () {
             if (!this._buttonController || !this._buttonController.hasPage(GButton.OVER))
                 return;
             this._over = false;
-            if (this._down)
-                return;
             this.setState(this._selected ? GButton.DOWN : GButton.UP);
         };
         GButton.prototype.__mousedown = function (evt) {
