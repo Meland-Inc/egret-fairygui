@@ -897,8 +897,8 @@ module fgui {
 
             this._needRefresh = true;
             GTimers.inst.callLater(this.refresh, this);
-            if (this._tweening != 0)
-                this.killTween();
+            // if (this._tweening != 0)//这个会导致滚动列表抖动，改成老版本的写法
+            //     this.killTween();
         }
 
         private refresh(): void {
