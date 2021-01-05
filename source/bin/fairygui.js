@@ -12592,8 +12592,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._aniFlag = -1;
             this._needRefresh = true;
             fgui.GTimers.inst.callLater(this.refresh, this);
-            if (this._tweening != 0)
-                this.killTween();
         };
         ScrollPane.prototype.refresh = function () {
             this._needRefresh = false;
