@@ -848,7 +848,7 @@ module fgui {
                 this.checkVirtualList();
 
                 if (index >= this._virtualItems.length)
-                    throw "Invalid child index: " + index + ">" + this._virtualItems.length;
+                    throw new Error("Invalid child index: " + index + ">" + this._virtualItems.length);
 
                 if (this._loop)
                     index = Math.floor(this._firstIndex / this._numItems) * this._numItems + index;
@@ -949,11 +949,11 @@ module fgui {
         private _setVirtual(loop: boolean): void {
             if (!this._virtual) {
                 if (this._scrollPane == null)
-                    throw "Virtual list must be scrollable!";
+                    throw new Error("Virtual list must be scrollable!");
 
                 if (loop) {
                     if (this._layout == ListLayoutType.FlowHorizontal || this._layout == ListLayoutType.FlowVertical)
-                        throw "Loop list is not supported for FlowHorizontal or FlowVertical layout!";
+                        throw new Error("Loop list is not supported for FlowHorizontal or FlowVertical layout!");
 
                     this._scrollPane.bouncebackEffect = false;
                 }
@@ -967,7 +967,7 @@ module fgui {
                     this._itemSize = new egret.Point();
                     var obj: GObject = this.getFromPool(null);
                     if (obj == null) {
-                        throw "Virtual List must have a default list item resource.";
+                        throw new Error("Virtual List must have a default list item resource.");
                     }
                     else {
                         this._itemSize.x = obj.width;
@@ -1002,7 +1002,7 @@ module fgui {
         public set numItems(value: number) {
             if (this._virtual) {
                 if (this.itemRenderer == null)
-                    throw "Set itemRenderer first!";
+                    throw new Error("Set itemRenderer first!");
 
                 this._numItems = value;
                 if (this._loop)

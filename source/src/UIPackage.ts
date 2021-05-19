@@ -103,7 +103,7 @@ module fgui {
                 if (!descData)
                     descData = RES.getRes(resKey + "_fui");
                 if (!descData)
-                    throw "Resource '" + resKey + "' not found, please check default.res.json!";
+                    throw new Error("Resource '" + resKey + "' not found, please check default.res.json!");
             }
 
             var pkg: UIPackage = new UIPackage();

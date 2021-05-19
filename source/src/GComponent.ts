@@ -77,7 +77,7 @@ module fgui {
 
         public addChildAt(child: GObject, index: number = 0): GObject {
             if (!child)
-                throw "child is null";
+                throw new Error("child is null");
 
             var numChildren: number = this._children.length;
 
@@ -111,7 +111,7 @@ module fgui {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         }
 
@@ -161,7 +161,7 @@ module fgui {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         }
 
@@ -180,7 +180,7 @@ module fgui {
             if (index >= 0 && index < this.numChildren)
                 return this._children[index];
             else
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
         }
 
         public getChild(name: string): GObject {
@@ -255,7 +255,7 @@ module fgui {
         public setChildIndex(child: GObject, index: number): void {
             var oldIndex: number = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
 
             if (child.sortingOrder != 0) //no effect
                 return;
@@ -272,7 +272,7 @@ module fgui {
         public setChildIndexBefore(child: GObject, index: number): number {
             var oldIndex: number = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
 
             if (child.sortingOrder != 0) //no effect
                 return oldIndex;
@@ -339,7 +339,7 @@ module fgui {
             var index1: number = this._children.indexOf(child1);
             var index2: number = this._children.indexOf(child2);
             if (index1 == -1 || index2 == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             this.swapChildrenAt(index1, index2);
         }
 
@@ -393,7 +393,7 @@ module fgui {
         public removeController(c: Controller): void {
             var index: number = this._controllers.indexOf(c);
             if (index == -1)
-                throw "controller not exists";
+                throw new Error("controller not exists");
 
             c.parent = null;
             this._controllers.splice(index, 1);
