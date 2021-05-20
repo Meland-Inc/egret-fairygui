@@ -141,7 +141,7 @@ namespace fgui {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         }
 
@@ -159,7 +159,7 @@ namespace fgui {
             if (index >= 0 && index < this.numChildren)
                 return this._children[index];
             else
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
         }
 
         public getChildIndex(child: GTreeNode): number {
@@ -191,7 +191,7 @@ namespace fgui {
         public setChildIndex(child: GTreeNode, index: number): void {
             var oldIndex: number = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
 
             var cnt: number = this._children.length;
             if (index < 0)
@@ -212,7 +212,7 @@ namespace fgui {
             var index1: number = this._children.indexOf(child1);
             var index2: number = this._children.indexOf(child2);
             if (index1 == -1 || index2 == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             this.swapChildrenAt(index1, index2);
         }
 
