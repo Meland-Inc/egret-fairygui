@@ -228,7 +228,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             set: function (value) {
                 if (this._selectedIndex != value) {
                     if (value > this._pageIds.length - 1)
-                        throw "index out of bounds: " + value;
+                        throw new Error("index out of bounds: " + value);
                     this.changing = true;
                     this._previousIndex = this._selectedIndex;
                     this._selectedIndex = value;
@@ -243,7 +243,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Controller.prototype.setSelectedIndex = function (value) {
             if (this._selectedIndex != value) {
                 if (value > this._pageIds.length - 1)
-                    throw "index out of bounds: " + value;
+                    throw new Error("index out of bounds: " + value);
                 this.changing = true;
                 this._previousIndex = this._selectedIndex;
                 this._selectedIndex = value;
@@ -2129,7 +2129,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GComponent.prototype.addChildAt = function (child, index) {
             if (index === void 0) { index = 0; }
             if (!child)
-                throw "child is null";
+                throw new Error("child is null");
             var numChildren = this._children.length;
             if (index >= 0 && index <= numChildren) {
                 if (child.parent == this) {
@@ -2157,7 +2157,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         };
         GComponent.prototype.getInsertPosForSortingChild = function (target) {
@@ -2198,7 +2198,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         };
         GComponent.prototype.removeChildren = function (beginIndex, endIndex, dispose) {
@@ -2215,7 +2215,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (index >= 0 && index < this.numChildren)
                 return this._children[index];
             else
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
         };
         GComponent.prototype.getChild = function (name) {
             var cnt = this._children.length;
@@ -2277,7 +2277,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GComponent.prototype.setChildIndex = function (child, index) {
             var oldIndex = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             if (child.sortingOrder != 0)
                 return;
             var cnt = this._children.length;
@@ -2290,7 +2290,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GComponent.prototype.setChildIndexBefore = function (child, index) {
             var oldIndex = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             if (child.sortingOrder != 0)
                 return oldIndex;
             var cnt = this._children.length;
@@ -2346,7 +2346,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var index1 = this._children.indexOf(child1);
             var index2 = this._children.indexOf(child2);
             if (index1 == -1 || index2 == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             this.swapChildrenAt(index1, index2);
         };
         GComponent.prototype.swapChildrenAt = function (index1, index2) {
@@ -2393,7 +2393,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GComponent.prototype.removeController = function (c) {
             var index = this._controllers.indexOf(c);
             if (index == -1)
-                throw "controller not exists";
+                throw new Error("controller not exists");
             c.parent = null;
             this._controllers.splice(index, 1);
             var length = this._children.length;
@@ -5844,7 +5844,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     return;
                 this.checkVirtualList();
                 if (index >= this._virtualItems.length)
-                    throw "Invalid child index: " + index + ">" + this._virtualItems.length;
+                    throw new Error("Invalid child index: " + index + ">" + this._virtualItems.length);
                 if (this._loop)
                     index = Math.floor(this._firstIndex / this._numItems) * this._numItems + index;
                 var rect;
@@ -5929,10 +5929,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GList.prototype._setVirtual = function (loop) {
             if (!this._virtual) {
                 if (this._scrollPane == null)
-                    throw "Virtual list must be scrollable!";
+                    throw new Error("Virtual list must be scrollable!");
                 if (loop) {
                     if (this._layout == fgui.ListLayoutType.FlowHorizontal || this._layout == fgui.ListLayoutType.FlowVertical)
-                        throw "Loop list is not supported for FlowHorizontal or FlowVertical layout!";
+                        throw new Error("Loop list is not supported for FlowHorizontal or FlowVertical layout!");
                     this._scrollPane.bouncebackEffect = false;
                 }
                 this._virtual = true;
@@ -5943,7 +5943,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     this._itemSize = new egret.Point();
                     var obj = this.getFromPool(null);
                     if (obj == null) {
-                        throw "Virtual List must have a default list item resource.";
+                        throw new Error("Virtual List must have a default list item resource.");
                     }
                     else {
                         this._itemSize.x = obj.width;
@@ -5975,7 +5975,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             set: function (value) {
                 if (this._virtual) {
                     if (this.itemRenderer == null)
-                        throw "Set itemRenderer first!";
+                        throw new Error("Set itemRenderer first!");
                     this._numItems = value;
                     if (this._loop)
                         this._realNumItems = this._numItems * 6;
@@ -10707,7 +10707,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return child;
             }
             else {
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
             }
         };
         GTreeNode.prototype.removeChildren = function (beginIndex, endIndex) {
@@ -10723,7 +10723,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (index >= 0 && index < this.numChildren)
                 return this._children[index];
             else
-                throw "Invalid child index";
+                throw new Error("Invalid child index");
         };
         GTreeNode.prototype.getChildIndex = function (child) {
             return this._children.indexOf(child);
@@ -10747,7 +10747,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GTreeNode.prototype.setChildIndex = function (child, index) {
             var oldIndex = this._children.indexOf(child);
             if (oldIndex == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             var cnt = this._children.length;
             if (index < 0)
                 index = 0;
@@ -10764,7 +10764,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var index1 = this._children.indexOf(child1);
             var index2 = this._children.indexOf(child2);
             if (index1 == -1 || index2 == -1)
-                throw "Not a child of this container";
+                throw new Error("Not a child of this container");
             this.swapChildrenAt(index1, index2);
         };
         GTreeNode.prototype.swapChildrenAt = function (index1, index2) {
@@ -14767,7 +14767,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 if (!descData)
                     descData = RES.getRes(resKey + "_fui");
                 if (!descData)
-                    throw "Resource '" + resKey + "' not found, please check default.res.json!";
+                    throw new Error("Resource '" + resKey + "' not found, please check default.res.json!");
             }
             var pkg = new UIPackage();
             pkg._resKey = resKey;
@@ -14794,8 +14794,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var pkg = UIPackage.getByName(pkgName);
             if (pkg)
                 return pkg.createObject(resName, userClass);
-            else
+            else {
+                console.error("UIPackage createObject not find pkg, pkg =" + pkgName + " resName=" + resName + " userClass=" + userClass);
                 return null;
+            }
         };
         UIPackage.createObjectFromURL = function (url, userClass) {
             var pi = UIPackage.getItemByURL(url);
@@ -15080,13 +15082,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var pi = this._itemsByName[resName];
             if (pi)
                 return this.internalCreateObject(pi, userClass);
-            else
+            else {
+                console.error("UIPackage createObject not find resName, pkg=" + this._name + " resName=" + resName + " userClass=" + userClass);
                 return null;
+            }
         };
         UIPackage.prototype.internalCreateObject = function (item, userClass) {
             var g = fgui.UIObjectFactory.newObject(item, userClass);
-            if (g == null)
+            if (g == null) {
+                console.error("UIPackage createObject internalCreateObject create fail, pkg=" + this._name + " resName=" + item.name + " userClass=" + userClass);
                 return null;
+            }
             UIPackage._constructing++;
             g.constructFromResource();
             UIPackage._constructing--;
