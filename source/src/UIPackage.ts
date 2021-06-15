@@ -134,8 +134,10 @@ module fgui {
             var pkg: UIPackage = UIPackage.getByName(pkgName);
             if (pkg)
                 return pkg.createObject(resName, userClass);
-            else
+            else {
+                console.error(`UIPackage createObject not find pkg, pkg =${pkgName} resName=${resName} userClass=${userClass}`);
                 return null;
+            }
         }
 
         public static createObjectFromURL(url: string, userClass?: new () => GObject): GObject {
@@ -463,15 +465,19 @@ module fgui {
             var pi: PackageItem = this._itemsByName[resName];
             if (pi)
                 return this.internalCreateObject(pi, userClass);
-            else
+            else {
+                console.error(`UIPackage createObject not find resName, pkg=${this._name} resName=${resName} userClass=${userClass}`);
                 return null;
+            }
         }
 
         public internalCreateObject(item: PackageItem, userClass?: new () => GObject): GObject {
             var g: GObject = UIObjectFactory.newObject(item, userClass);
 
-            if (g == null)
+            if (g == null) {
+                console.error(`UIPackage createObject internalCreateObject create fail, pkg=${this._name} resName=${item.name} userClass=${userClass}`);
                 return null;
+            }
 
             UIPackage._constructing++;
             g.constructFromResource();
