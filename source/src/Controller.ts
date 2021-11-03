@@ -47,7 +47,7 @@ module fgui {
         }
 
         //功能和设置selectedIndex一样，但不会触发事件
-        public setSelectedIndex(value: number): void {
+        public setSelectedIndex(value: number, tTriggerEvent: boolean = true): void {
             if (this._selectedIndex != value) {
                 if (value > this._pageIds.length - 1)
                     throw new Error("index out of bounds: " + value);
@@ -56,6 +56,9 @@ module fgui {
                 this._previousIndex = this._selectedIndex;
                 this._selectedIndex = value;
                 this.parent.applyController(this);
+                if (tTriggerEvent) {
+                    this.dispatchEvent(new StateChangeEvent(StateChangeEvent.CHANGED));
+                }
                 this.changing = false;
             }
         }
@@ -79,11 +82,11 @@ module fgui {
         }
 
         //功能和设置selectedPage一样，但不会触发事件
-        public setSelectedPage(value: string): void {
+        public setSelectedPage(value: string, tTriggerEvent: boolean = true): void {
             var i: number = this._pageNames.indexOf(value);
             if (i == -1)
                 i = 0;
-            this.setSelectedIndex(i);
+            this.setSelectedIndex(i, tTriggerEvent);
         }
 
         public get previousPage(): string {
