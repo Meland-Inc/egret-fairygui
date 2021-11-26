@@ -90,6 +90,10 @@ module fgui {
 
         public set name(value: string) {
             this._name = value;
+
+            if (this._name) {
+                this._displayObject.name = this._name;
+            }
         }
 
         public get x(): number {
@@ -986,6 +990,7 @@ module fgui {
             this._displayObject.touchEnabled = old.touchEnabled;
             this._displayObject.scaleX = old.scaleX;
             this._displayObject.scaleY = old.scaleY;
+            this._displayObject.name = old.name;
             ToolSet.setColorFilter(this._displayObject, this._grayed);
 
             if (this._displayObject instanceof egret.DisplayObjectContainer)
@@ -1092,6 +1097,11 @@ module fgui {
 
             this._id = buffer.readS();
             this._name = buffer.readS();
+
+            if (this._name && this._displayObject) {
+                this._displayObject.name = this._name;
+            }
+
             f1 = buffer.readInt();
             f2 = buffer.readInt();
             this.setXY(f1, f2);

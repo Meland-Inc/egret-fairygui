@@ -806,6 +806,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             },
             set: function (value) {
                 this._name = value;
+                if (this._name) {
+                    this._displayObject.name = this._name;
+                }
             },
             enumerable: true,
             configurable: true
@@ -1800,6 +1803,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._displayObject.touchEnabled = old.touchEnabled;
             this._displayObject.scaleX = old.scaleX;
             this._displayObject.scaleY = old.scaleY;
+            this._displayObject.name = old.name;
             fgui.ToolSet.setColorFilter(this._displayObject, this._grayed);
             if (this._displayObject instanceof egret.DisplayObjectContainer)
                 this._displayObject.touchChildren = this._touchable;
@@ -1892,6 +1896,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var f2;
             this._id = buffer.readS();
             this._name = buffer.readS();
+            if (this._name && this._displayObject) {
+                this._displayObject.name = this._name;
+            }
             f1 = buffer.readInt();
             f2 = buffer.readInt();
             this.setXY(f1, f2);
