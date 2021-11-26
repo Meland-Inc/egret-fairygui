@@ -9233,6 +9233,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (str != null)
                 this.text = str;
             this._sizeDirty = false;
+            if (this.displayObject && this.parent && this.parent.packageItem) {
+                this.displayObject['uiTextName'] = "" + this.parent.packageItem.owner.id + this.parent.packageItem.id + "-" + this.id;
+            }
         };
         GTextField._htmlParser = new egret.HtmlTextParser();
         return GTextField;

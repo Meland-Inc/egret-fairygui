@@ -851,6 +851,11 @@ module fgui {
             if (str != null)
                 this.text = str;
             this._sizeDirty = false;
+
+            //文本需要添加导出字符串文本中的name关键字 方便翻译时查找特殊weight 但是这里只能定位到元素 状态文本那些信息暂时未添加
+            if (this.displayObject && this.parent && this.parent.packageItem) {
+                this.displayObject['translationName'] = `${this.parent.packageItem.owner.id}${this.parent.packageItem.id}-${this.id}`;
+            }
         }
     }
 
