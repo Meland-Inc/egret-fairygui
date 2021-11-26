@@ -71,6 +71,10 @@ module fgui {
         }
 
         public set text(value: string) {
+            if (this._text !== value) {
+                this.setDisplayObjectIsModified(true);
+            }
+
             this._text = value;
             if (this._text == null)
                 this._text = "";
@@ -80,6 +84,14 @@ module fgui {
                 this.renderNow();
             else
                 this.render();
+        }
+
+        //设置显示对象上属性标记文本是否修改 可以判定显示文本是在UI工程中还是配置或程序中
+        protected setDisplayObjectIsModified(value: boolean): void {
+            if (!this.displayObject) {
+                return;
+            }
+            this.displayObject['textIsModify'] = value;
         }
 
         protected updateTextFieldText(): void {
@@ -853,8 +865,13 @@ module fgui {
             this._sizeDirty = false;
 
             //文本需要添加导出字符串文本中的name关键字 方便翻译时查找特殊weight 但是这里只能定位到元素 状态文本那些信息暂时未添加
-            if (this.displayObject && this.parent && this.parent.packageItem) {
-                this.displayObject['translationName'] = `${this.parent.packageItem.owner.id}${this.parent.packageItem.id}-${this.id}`;
+            if (this.displayObject) {
+                if (this.parent && this.parent.packageItem) {
+                    this.displayObject['translationName'] = `${this.parent.packageItem.owner.id}${this.parent.packageItem.id}-${this.id}`;
+                }
+
+                //初始化完字符串 显示对象上直接显示未修改
+                this.setDisplayObjectIsModified(false);
             }
         }
     }

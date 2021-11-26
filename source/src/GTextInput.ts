@@ -157,6 +157,7 @@ module fgui {
 
         private __textChanged(evt: egret.Event): void {
             this._text = this._textField.text;
+            this.setDisplayObjectIsModified(true);
         }
 
         private __focusIn(evt: egret.Event): void {
@@ -172,6 +173,7 @@ module fgui {
                 this._textField.displayAsPassword = false;
                 this._textField.textFlow = (new egret.HtmlTextParser).parser(UBBParser.inst.parse(ToolSet.encodeHTML(this._promptText)));
             }
+            this.setDisplayObjectIsModified(true);
         }
 
         //修复拖动输入框会锁死代码块编辑界面    Felix June 4th, 2019 3:24pm
