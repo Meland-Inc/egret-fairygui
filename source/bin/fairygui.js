@@ -11822,6 +11822,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             _this._owner.addEventListener(egret.TouchEvent.TOUCH_BEGIN, _this.__touchBegin, _this);
             return _this;
         }
+        Object.defineProperty(ScrollPane.prototype, "scrollType", {
+            get: function () {
+                return this._scrollType;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ScrollPane.prototype.setup = function (buffer) {
             this._scrollType = buffer.readByte();
             var scrollBarDisplay = buffer.readByte();
