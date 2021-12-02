@@ -8,6 +8,10 @@ module fgui {
         private _alignContainer?: egret.DisplayObjectContainer;
 
         private _scrollType: number;
+        /**滚动方向 ScrollType */
+        public get scrollType(): number {
+            return this._scrollType;
+        }
         private _scrollStep: number;
         private _decelerationRate: number;
         private _scrollBarMargin: Margin;
