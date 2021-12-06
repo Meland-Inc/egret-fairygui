@@ -1057,6 +1057,7 @@ declare module fgui {
         private switchBitmapMode;
         dispose(): void;
         text: string;
+        protected setDisplayObjectIsModified(value: boolean): void;
         protected updateTextFieldText(): void;
         font: string;
         fontSize: number;

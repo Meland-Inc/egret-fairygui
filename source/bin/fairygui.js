@@ -806,6 +806,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             },
             set: function (value) {
                 this._name = value;
+                if (this._name) {
+                    this._displayObject.name = this._name;
+                }
             },
             enumerable: true,
             configurable: true
@@ -1800,6 +1803,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._displayObject.touchEnabled = old.touchEnabled;
             this._displayObject.scaleX = old.scaleX;
             this._displayObject.scaleY = old.scaleY;
+            this._displayObject.name = old.name;
             fgui.ToolSet.setColorFilter(this._displayObject, this._grayed);
             if (this._displayObject instanceof egret.DisplayObjectContainer)
                 this._displayObject.touchChildren = this._touchable;
@@ -1892,6 +1896,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var f2;
             this._id = buffer.readS();
             this._name = buffer.readS();
+            if (this._name && this._displayObject) {
+                this._displayObject.name = this._name;
+            }
             f1 = buffer.readInt();
             f2 = buffer.readInt();
             this.setXY(f1, f2);
@@ -8487,6 +8494,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return this._text;
             },
             set: function (value) {
+                if (this._text !== value) {
+                    this.setDisplayObjectIsModified(true);
+                }
                 this._text = value;
                 if (this._text == null)
                     this._text = "";
@@ -8499,6 +8509,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             enumerable: true,
             configurable: true
         });
+        GTextField.prototype.setDisplayObjectIsModified = function (value) {
+            if (!this.displayObject) {
+                return;
+            }
+            this.displayObject['textIsModify'] = value;
+        };
         GTextField.prototype.updateTextFieldText = function () {
             var text2 = this._text;
             if (this._templateVars)
@@ -9226,6 +9242,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (str != null)
                 this.text = str;
             this._sizeDirty = false;
+            if (this.displayObject) {
+                if (this.parent && this.parent.packageItem) {
+                    this.displayObject['translationName'] = "" + this.parent.packageItem.owner.id + this.parent.packageItem.id + "-" + this.id;
+                }
+                this.setDisplayObjectIsModified(false);
+            }
         };
         GTextField._htmlParser = new egret.HtmlTextParser();
         return GTextField;
@@ -10217,6 +10239,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         GTextInput.prototype.__textChanged = function (evt) {
             this._text = this._textField.text;
+            this.setDisplayObjectIsModified(true);
         };
         GTextInput.prototype.__focusIn = function (evt) {
             if (!this._text && this._promptText) {
@@ -10230,6 +10253,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this._textField.displayAsPassword = false;
                 this._textField.textFlow = (new egret.HtmlTextParser).parser(fgui.UBBParser.inst.parse(fgui.ToolSet.encodeHTML(this._promptText)));
             }
+            this.setDisplayObjectIsModified(true);
         };
         GTextInput.prototype.requestFocus = function () {
             this._textField.setFocus();
