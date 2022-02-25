@@ -3486,6 +3486,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.setState(GButton.UP);
             this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.__mousedown, this);
             this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.__click, this);
+            this.addEventListener(mouse.MouseEvent.MOUSE_OVER, this.rollOver, this);
+            this.addEventListener(mouse.MouseEvent.MOUSE_OUT, this.rollOut, this);
         };
         GButton.prototype.setup_afterAdd = function (buffer, beginPos) {
             _super_1.prototype.setup_afterAdd.call(this, buffer, beginPos);

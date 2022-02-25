@@ -392,6 +392,8 @@ module fgui {
 
             this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.__mousedown, this);
             this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.__click, this);
+            this.addEventListener(mouse.MouseEvent.MOUSE_OVER, this.rollOver, this);
+            this.addEventListener(mouse.MouseEvent.MOUSE_OUT, this.rollOut, this);
         }
 
         public setup_afterAdd(buffer: ByteBuffer, beginPos: number): void {
