@@ -280,6 +280,7 @@ declare module fgui {
         private _disposed?;
         private _dragTesting?;
         private _dragStartPos?;
+        private _onDisposeCB;
         private _relations;
         private _group?;
         private _gears;
@@ -318,6 +319,7 @@ declare module fgui {
         readonly groupOffsetX: number;
         readonly groupOffsetY: number;
         groupSetXYOffset(dx: number, dy: number): void;
+        setDisposeCB(tCB: (obj: GObject) => void, thisObject: any): void;
         setXY(xv: number, yv: number): void;
         xMin: number;
         yMin: number;

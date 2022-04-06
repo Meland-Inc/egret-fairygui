@@ -858,6 +858,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             }
         };
+        GObject.prototype.setDisposeCB = function (tCB, thisObject) {
+            this._onDisposeCB = tCB ? tCB.bind(thisObject) : null;
+        };
         GObject.prototype.setXY = function (xv, yv) {
             if (this._x != xv || this._y != yv) {
                 var dx = xv - this._x;
@@ -1639,6 +1642,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         GObject.prototype.dispose = function () {
             if (this._disposed)
                 return;
+            try {
+                if (this._onDisposeCB) {
+                    this._onDisposeCB(this);
+                    this._onDisposeCB = null;
+                }
+            }
+            catch (error) {
+                console.error("fairyGUI onDispose execute error=" + error + " stack=" + error.stack);
+            }
             this._disposed = true;
             this.removeFromParent();
             this._relations.dispose();
