@@ -31,6 +31,7 @@ module fgui {
         private _disposed?: boolean = false;
         private _dragTesting?: boolean;
         private _dragStartPos?: egret.Point;
+        private _onDisposeCB: (obj: GObject) => void;
 
         private _relations: Relations;
         private _group?: GGroup;
@@ -136,6 +137,11 @@ module fgui {
                     gear.updateFromRelations(dx, dy);//直接使用updateFromRelations 组位置改变可以看做是整个关联修改
                 }
             }
+        }
+
+        /**设置释放回调 不要乱用 用得少 为了性能里面不是数组 会覆盖 回调完成后会自动清除 */
+        public setDisposeCB(tCB: (obj: GObject) => void, thisObject: any): void {
+            this._onDisposeCB = tCB ? tCB.bind(thisObject) : null;
         }
 
         public setXY(xv: number, yv: number): void {
@@ -808,6 +814,15 @@ module fgui {
         public dispose(): void {
             if (this._disposed)
                 return;
+
+            try {
+                if (this._onDisposeCB) {
+                    this._onDisposeCB(this);
+                    this._onDisposeCB = null;
+                }
+            } catch (error) {
+                console.error(`fairyGUI onDispose execute error=${error} stack=${error.stack}`);
+            }
 
             this._disposed = true;
             this.removeFromParent();
