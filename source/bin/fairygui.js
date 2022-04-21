@@ -8307,6 +8307,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(GProgressBar.prototype, "reverse", {
+            set: function (value) {
+                this._reverse = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(GProgressBar.prototype, "min", {
             get: function () {
                 return this._min;

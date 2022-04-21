@@ -1014,6 +1014,7 @@ declare module fgui {
         private _barStartY;
         constructor();
         titleType: ProgressTitleType;
+        reverse: boolean;
         min: number;
         max: number;
         value: number;
