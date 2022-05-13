@@ -38,6 +38,10 @@ module fgui {
             }
         }
 
+        public set reverse(value: boolean) {
+            this._reverse = value;
+        }
+
         public get min(): number {
             return this._min;
         }
